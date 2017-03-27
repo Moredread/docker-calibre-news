@@ -8,7 +8,7 @@
 # Name of the recipe to fetch. You can run:
 #     ebook-convert --list-recipes
 # to look for the correct name. Do not forget the .recipe suffix
-RECIPE="${RECIPE:-LWN.net Weekly Edition.recipe}"
+RECIPE="${RECIPE:-}"
 
 OUTDIR="/news"
 
@@ -18,28 +18,28 @@ NEWS_PASSWORD="${NEWS_PASSWORD:-}"
 
 # Select your output profile. See http://manual.calibre-ebook.com/cli/ebook-convert-14.html
 # for a list. Common choices: kindle, kindle_dx, kindle_fire, kobo, ipad, sony
-OUTPROFILE="${OUTPROFILE:-kindle}"
+OUTPUT_PROFILE="${OUTPUT_PROFILE:-kindle}"
 
 
 # A text file with an email per line. This script will send an email to each one.
 # You can set it to "" to not send any email
-EMAILS="${EMAILS:-}"
+EMAILS_TO="${MAILS_TO:-}"
 
 # A prefix for the emails' subject. The date will be appended to it.
-SUBJECTPREFIX="News"
+SUBJECT_PREFIX="News"
 # A prefix for the emails' content. The date will be appended to it.
-CONTENTPREFIX="Attached is the your periodical downloaded by calibre"
+CONTENT_PREFIX="Attached is your periodical downloaded by calibre"
 # A prefix for generate file. The date will be appended to it.
-OUTPUTPREFIX="${OUTPUTPREFIX:-news}"
+OUTPUT_PREFIX="${OUTPUT_PREFIX:-news}"
 #
 ######################## End Customization Section #############################
 
 DATEFILE=`date "+%Y_%m_%d"`
 DATESTR=`date "+%Y/%m/%d"`
-OUTFILE="${OUTDIR}/${OUTPUTPREFIX}${DATEFILE}.mobi"
+OUTFILE="${OUTDIR}/${OUTPUT_PREFIX}${DATEFILE}.mobi"
 
 echo "Fetching $RECIPE into $OUTFILE"
-ebook-convert "$RECIPE" "$OUTFILE" --output-profile "$OUTPROFILE" --username "$NEWS_USERNAME" --password "$NEWS_PASSWORD"
+ebook-convert "$RECIPE" "$OUTFILE" --output-profile "$OUTPUT_PROFILE" --username "$NEWS_USERNAME" --password "$NEWS_PASSWORD"
 
 # Change the author of the ebook from "calibre" to the current date.
 # I do this because sending periodicals to a Kindle Touch is removing
@@ -54,7 +54,7 @@ echo "Setting date $DATESTR as author in $OUTFILE"
 ebook-meta -a "$DATESTR" "$OUTFILE"
 
 # email the files
-for TO in $EMAILS; do
+for TO in $MAILS_TO; do
 	echo "Sending $OUTFILE to $TO"
-	calibre-smtp --attachment "$OUTFILE" --subject "$SUBJECTPREFIX ($DATESTR)" "$FROM" "$TO"  "$CONTENTPREFIX ($DATESTR)"
+	calibre-smtp --attachment "$OUTFILE" --subject "$SUBJECT_PREFIX ($DATESTR)" "$MAIL_FROM" "$TO" "$CONTENT_PREFIX ($DATESTR)"
 done
